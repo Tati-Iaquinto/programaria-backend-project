@@ -1,3 +1,6 @@
+// tatiiaquinto
+// jN5A7dzWHkHIrlzd
+// mongodb+srv://tatiiaquinto:<password>@clustermulheres.jorzawm.mongodb.net/?retryWrites=true&w=majority
 const express = require("express")
 //configuração da rota
 const router = express.Router()

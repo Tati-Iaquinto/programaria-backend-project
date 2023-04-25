@@ -1,36 +1,25 @@
 const express = require("express") //inicia o express
 const router = express.Router() //configura a primeira parte da rota
 const { v4: uuidv4 } = require('uuid') //baixa a biblio uuid
+const conectaBancoDeDados = require('./bancoDeDados')//liga ao banco de dados
+conectaBancoDeDados()// ativa a função que da acesso ao banco de dados
+
+const Mulher = require('./mulherModel')
 
 const app = express() //inicia o app
 app.use(express.json()) //trata as requisições em json, dá erro 500 sem isso
 const porta = 3333 //cria a porta
 
-//cria a lista inicial de mulheres
-const mulheres = [
-  {
-    id:'1',
-    nome: 'Simara Conceição',
-    imagem: 'https://github.com/simaraconceicao.png',
-    minibio: 'Desenvolvedora e instrutora'
-  },
-  {
-    id:'2',
-    nome:'Iana Chan',
-    imagem:'https://bit.ly/3JCXBqP',
-    minibio:'CEO e fundadora do PrograMaria'
-  },
-  {
-    id:'3',
-    nome:'Nina da Hora',
-    imagem:'https://bit.ly/3FKpFaz',
-    minibio:'Hacker antirracista'
-  }
-] 
-
 //GET
-function mostraMulheres(request, response) {
-  response.json(mulheres)
+async function mostraMulheres(request, response) {
+  try {
+    //tenta comunicação com banco de dados, await faz esperar a conexao com banco de dados
+    const mulheresDataBase = await Mulher.find()
+
+    response.json(mulheresDataBase)
+  } catch (erro) {
+    console.log(erro)
+  }
 }
 
 //POST
@@ -73,6 +62,19 @@ function corrigeMulher(request, response) {
   response.json(mulheres)
 }
 
+//DELETE
+function deletaMulher(request, response) {
+  function todasMenosEla(mulher) {
+    if (mulher.id !== request.params.id) {
+      return mulher
+    }
+  }
+
+  const mulheresQueFicam = mulheres.filter(todasMenosEla)
+
+  response.json(mulheresQueFicam)
+}
+
 //PORTA
 function mostraPorta() {
   console.log("Servidor criado e rodando na porta ", porta)
@@ -82,4 +84,5 @@ function mostraPorta() {
 app.use(router.get('/mulheres', mostraMulheres)) //configura a rota GET /mulheres
 app.use(router.post('/mulheres', criaMulher)) //configura a rota POST /mulheres
 app.use(router.patch('/mulheres/:id', corrigeMulher))
+app.use(router.delete('/mulheres/:id', deletaMulher))
 app.listen(porta, mostraPorta) // servidor ouvindo a porta
