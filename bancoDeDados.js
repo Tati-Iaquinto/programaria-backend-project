@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+require('dotenv').config(MONGO_URL)
 
 //processo assíncrono para esperar outra função 
 async function conectaBancoDeDados() {
@@ -6,7 +7,7 @@ async function conectaBancoDeDados() {
     console.log('Conexão com o banco de dados iniciou')
 
     //espera uma execução para que o mongoose conecte
-    await mongoose.connect('mongodb+srv://tatiiaquinto:jN5A7dzWHkHIrlzd@clustermulheres.jorzawm.mongodb.net/?retryWrites=true&w=majority')
+    await mongoose.connect(process.env.MONGO_URL)
 
     console.log('Conexão com o banco de dados feita com sucesso')
 
